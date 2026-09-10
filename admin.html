@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - عقارات برو</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&display=swap" rel="stylesheet">
+    <script>tailwind.config = {theme: {extend: {colors: {brand: {500: '#f97316', 600: '#ea580c'}}, fontFamily: {cairo: ['Cairo', 'sans-serif']}}}}</script>
+    <style>body{font-family:'Cairo',sans-serif;background:#f8fafc}</style>
+</head>
+<body class="text-slate-800">
+
+<!-- شاشة تسجيل الدخول -->
+<div id="loginScreen" class="fixed inset-0 bg-gradient-to-br from-brand-600 to-orange-700 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+        <div class="text-center mb-6">
+            <div class="bg-brand-500 text-white p-3 rounded-xl inline-block mb-3"><i class="fa-solid fa-shield-halved text-3xl"></i></div>
+            <h2 class="text-2xl font-black">دخول لوحة التحكم</h2>
+            <p class="text-slate-500 text-sm">ادخل كلمة السر للمتابعة</p>
+        </div>
+        <div class="space-y-4">
+            <input id="passwordInput" type="password" placeholder="كلمة السر" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-brand-500 outline-none font-bold text-center">
+            <button onclick="checkPassword()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl">دخول</button>
+            <p id="errorMsg" class="text-red-500 text-center text-sm hidden">كلمة السر خطأ</p>
+        </div>
+    </div>
+</div>
+
+<!-- لوحة التحكم الاساسية -->
+<div id="dashboard" class="hidden">
+<header class="bg-white sticky top-0 z-40 border-b shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="bg-brand-500 text-white p-2.5 rounded-xl"><i class="fa-solid fa-shield-halved text-2xl"></i></div>
+            <span class="font-black text-2xl text-slate-800">لوحة التحكم</span>
+        </div>
+        <div class="flex gap-3">
+            <a href="index.html" target="_blank" class="text-brand-600 font-bold">عرض الموقع <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+            <button onclick="logout()" class="text-red-500 font-bold"><i class="fa-solid fa-right-from-bracket"></i> خروج</button>
+        </div>
+    </div>
+</header>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="grid lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1">
+            <div class="bg-white p-6 rounded-2xl shadow border-slate-100 sticky top-24">
+                <h2 class="font-black text-xl mb-4 flex items-center gap-2"><i class="fa-solid fa-plus text-brand-500"></i> إضافة / تعديل عقار</h2>
+                <input type="hidden" id="editId">
+                <div class="space-y-3">
+                    <input id="adminTitle" placeholder="عنوان العقار" class="w-full px-4 py-2.5 rounded-xl border-slate-200">
+                    <input id="adminLocation" placeholder="المنطقة: أكتوبر - الجيزة" class="w-full px-4 py-2.5 rounded-xl border">
+                    <input id="adminPrice" type="number" placeholder="السعر بالجنيه" class="w-full px-4 py-2.5 rounded-xl border">
+                    <textarea id="adminDesc" placeholder="وصف العقار" rows="3" class="w-full px-4 py-2.5 rounded-xl border"></textarea>
+                    <div class="grid grid-cols-2 gap-3">
+                        <select id="adminTag" class="w-full px-4 py-2.5 rounded-xl border font-semibold"><option value="للبيع">للبيع</option><option value="للإيجار">للإيجار</option></select>
+                        <select id="adminType" class="w-full px-4 py-2.5 rounded-xl border font-semibold"><option value="شقة">شقة</option><option value="فيلا">فيلا</option><option value="محل تجاري">محل تجاري</option><option value="أرض">أرض</option></select>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input id="adminArea" type="number" placeholder="المساحة" class="w-full px-3 py-2 rounded-xl border">
+                        <input id="adminBeds" type="number" placeholder="غرف" class="w-full px-3 py-2 rounded-xl border">
+                        <input id="adminBaths" type="number" placeholder="حمام" class="w-full px-3 py-2 rounded-xl border">
+                    </div>
+                    <input id="adminImage" type="file" accept="image/*" class="w-full text-sm">
+                    <img id="previewImg" class="w-full h-32 object-cover rounded-xl hidden">
+                    <button onclick="saveProperty()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl">حفظ العقار</button>
+                    <button onclick="clearForm()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 rounded-xl">عقار جديد</button>
+                    <button onclick="deleteAll()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl">مسح كل العقارات والصور</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2">
+            <div class="bg-white p-6 rounded-2xl shadow border">
+                <h2 class="font-black text-xl mb-4">كل العقارات <span id="count" class="text-brand-500 text-sm"></span></h2>
+                <div id="adminList" class="space-y-3">جاري التحميل...</div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+<script>
+  const ADMIN_PASSWORD = "sara02"; // <-- كلمة السر هنا
+
+  // تشييك لو مسجل دخول قبل كده
+  if(sessionStorage.getItem('adminLoggedIn') === 'true'){
+    showDashboard();
+  }
+
+  function checkPassword(){
+    const pass = document.getElementById('passwordInput').value;
+    if(pass === ADMIN_PASSWORD){
+        sessionStorage.setItem('adminLoggedIn', 'true');
+        showDashboard();
+    } else {
+        document.getElementById('errorMsg').classList.remove('hidden');
+    }
+  }
+
+  function showDashboard(){
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    initFirebase(); // شغل Firebase بعد الدخول
+  }
+
+  function logout(){
+    sessionStorage.removeItem('adminLoggedIn');
+    location.reload();
+  }
+
+  function initFirebase(){
+    const firebaseConfig = {
+      apiKey: "AIzaSyAexsdwzcSPvUeQ9nZYPna6AHlynPiiIXE",
+      authDomain: "webr-5bb4b.firebaseapp.com",
+      projectId: "webr-5bb4b",
+      storageBucket: "webr-5bb4b.firebasestorage.app",
+      messagingSenderId: "81990437380",
+      appId: "1:81990437380:web:22715c042d9d2b2d274351",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    document.getElementById('adminImage').onchange = e => {
+      const file = e.target.files[0];
+      if(file){
+          document.getElementById('previewImg').src = URL.createObjectURL(file);
+          document.getElementById('previewImg').classList.remove('hidden');
+      }
+    }
+
+    window.saveProperty = function() {
+      const id = document.getElementById('editId').value;
+      const data = {
+          title: document.getElementById('adminTitle').value,
+          location: document.getElementById('adminLocation').value,
+          regionKey: document.getElementById('adminLocation').value.split(' - ')[0],
+          price: parseFloat(document.getElementById('adminPrice').value),
+          desc: document.getElementById('adminDesc').value,
+          tag: document.getElementById('adminTag').value,
+          type: document.getElementById('adminType').value,
+          area: document.getElementById('adminArea').value + ' م²',
+          beds: parseInt(document.getElementById('adminBeds').value) || null,
+          baths: parseInt(document.getElementById('adminBaths').value) || null,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      const file = document.getElementById('adminImage').files[0];
+
+      if(file){
+          const ref = storage.ref('properties/' + Date.now() + '_' + file.name);
+          ref.put(file).then(snap => snap.ref.getDownloadURL()).then(url => {
+              data.image = url;
+              if(id) db.collection("properties").doc(id).update(data); else db.collection("properties").add(data);
+              alert("تم الحفظ"); clearForm();
+          });
+      } else if(id) {
+          db.collection("properties").doc(id).update(data); alert("تم التعديل"); clearForm();
+      } else { alert("لازم ترفع صورة للعقار الجديد"); }
+    }
+
+    window.editProperty = function(id){
+      db.collection("properties").doc(id).get().then(doc=>{
+          const p = doc.data();
+          document.getElementById('editId').value = id;
+          document.getElementById('adminTitle').value = p.title;
+          document.getElementById('adminLocation').value = p.location;
+          document.getElementById('adminPrice').value = p.price;
+          document.getElementById('adminDesc').value = p.desc;
+          document.getElementById('adminTag').value = p.tag;
+          document.getElementById('adminType').value = p.type;
+          document.getElementById('previewImg').src = p.image;
+          document.getElementById('previewImg').classList.remove('hidden');
+      })
+    }
+
+    window.deleteProperty = function(id, imageUrl){
+      if(!confirm("متأكد عايز تمسح العقار ده؟")) return;
+      db.collection("properties").doc(id).delete();
+      if(imageUrl) storage.refFromURL(imageUrl).delete().catch(e=>{});
+    }
+
+    window.deleteAll = function(){
+      if(!confirm("هتمسح كل العقارات والصور من Firebase. متأكد؟")) return;
+      db.collection("properties").get().then(snap=>{
+          snap.forEach(doc=>{ deleteProperty(doc.id, doc.data().image); })
+          alert("تم مسح الكل")
+      })
+    }
+
+    window.clearForm = function(){
+      document.getElementById('editId').value = '';
+      document.querySelectorAll('#dashboard input, #dashboard textarea, #dashboard select').forEach(i=>i.value='');
+      document.getElementById('previewImg').classList.add('hidden');
+    }
+
+    db.collection("properties").orderBy("createdAt", "desc").onSnapshot(snap=>{
+      let html = '';
+      document.getElementById('count').innerText = `(${snap.size})`;
+      snap.forEach(doc=>{
+          const p = doc.data();
+          html += `<div class="flex gap-4 border p-3 rounded-xl hover:bg-slate-50">
+              <img src="${p.image}" class="w-24 h-24 rounded-xl object-cover">
+              <div class="flex-1">
+                  <p class="font-bold">${p.title}</p>
+                  <p class="text-sm text-slate-500"><i class="fa-solid fa-location-dot text-brand-500"></i> ${p.location}</p>
+                  <p class="text-brand-600 font-black">${p.price.toLocaleString()} ج.م</p>
+              </div>
+              <div class="flex flex-col gap-2">
+                  <button onclick="editProperty('${doc.id}')" class="text-blue-500 font-bold text-sm"><i class="fa-solid fa-pen"></i> تعديل</button>
+                  <button onclick="deleteProperty('${doc.id}', '${p.image}')" class="text-red-500 font-bold text-sm"><i class="fa-solid fa-trash"></i> مسح</button>
+              </div>
+          </div>`;
+      });
+      document.getElementById('adminList').innerHTML = html || 'لا يوجد عقارات';
+    });
+  }
+
+  // دخول بالانتر
+  document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') checkPassword();
+  })
+</script>
+</body>
+</html>
