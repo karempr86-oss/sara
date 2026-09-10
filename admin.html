@@ -18,7 +18,7 @@
         <div class="text-center mb-6">
             <div class="bg-brand-500 text-white p-3 rounded-xl inline-block mb-3"><i class="fa-solid fa-shield-halved text-3xl"></i></div>
             <h2 class="text-2xl font-black">دخول لوحة التحكم</h2>
-            <p class="text-slate-500 text-sm">ادخل كلمة السر للمتابعة</p>
+            <p class="text-slate-500 text-sm">كلمة السر: sara02</p>
         </div>
         <div class="space-y-4">
             <input id="passwordInput" type="password" placeholder="كلمة السر" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-brand-500 outline-none font-bold text-center">
@@ -50,24 +50,24 @@
                 <h2 class="font-black text-xl mb-4 flex items-center gap-2"><i class="fa-solid fa-plus text-brand-500"></i> إضافة / تعديل عقار</h2>
                 <input type="hidden" id="editId">
                 <div class="space-y-3">
-                    <input id="adminTitle" placeholder="عنوان العقار" class="w-full px-4 py-2.5 rounded-xl border-slate-200">
-                    <input id="adminLocation" placeholder="المنطقة: أكتوبر - الجيزة" class="w-full px-4 py-2.5 rounded-xl border">
-                    <input id="adminPrice" type="number" placeholder="السعر بالجنيه" class="w-full px-4 py-2.5 rounded-xl border">
-                    <textarea id="adminDesc" placeholder="وصف العقار" rows="3" class="w-full px-4 py-2.5 rounded-xl border"></textarea>
+                    <input id="adminTitle" placeholder="عنوان العقار" class="w-full px-4 py-2.5 rounded-xl border-2">
+                    <input id="adminLocation" placeholder="المنطقة: اكتوبر - الجيزة" class="w-full px-4 py-2.5 rounded-xl border-2">
+                    <input id="adminPrice" type="number" placeholder="السعر بالجنيه" class="w-full px-4 py-2.5 rounded-xl border-2">
+                    <textarea id="adminDesc" placeholder="وصف العقار" rows="3" class="w-full px-4 py-2.5 rounded-xl border-2"></textarea>
                     <div class="grid grid-cols-2 gap-3">
-                        <select id="adminTag" class="w-full px-4 py-2.5 rounded-xl border font-semibold"><option value="للبيع">للبيع</option><option value="للإيجار">للإيجار</option></select>
-                        <select id="adminType" class="w-full px-4 py-2.5 rounded-xl border font-semibold"><option value="شقة">شقة</option><option value="فيلا">فيلا</option><option value="محل تجاري">محل تجاري</option><option value="أرض">أرض</option></select>
+                        <select id="adminTag" class="w-full px-4 py-2.5 rounded-xl border-2 font-semibold"><option value="للبيع">للبيع</option><option value="للإيجار">للإيجار</option></select>
+                        <select id="adminType" class="w-full px-4 py-2.5 rounded-xl border-2 font-semibold"><option value="شقة">شقة</option><option value="فيلا">فيلا</option><option value="محل تجاري">محل تجاري</option><option value="أرض">أرض</option></select>
                     </div>
                     <div class="grid grid-cols-3 gap-2">
-                        <input id="adminArea" type="number" placeholder="المساحة" class="w-full px-3 py-2 rounded-xl border">
-                        <input id="adminBeds" type="number" placeholder="غرف" class="w-full px-3 py-2 rounded-xl border">
-                        <input id="adminBaths" type="number" placeholder="حمام" class="w-full px-3 py-2 rounded-xl border">
+                        <input id="adminArea" type="number" placeholder="المساحة" class="w-full px-3 py-2 rounded-xl border-2">
+                        <input id="adminBeds" type="number" placeholder="غرف" class="w-full px-3 py-2 rounded-xl border-2">
+                        <input id="adminBaths" type="number" placeholder="حمام" class="w-full px-3 py-2 rounded-xl border-2">
                     </div>
                     <input id="adminImage" type="file" accept="image/*" class="w-full text-sm">
                     <img id="previewImg" class="w-full h-32 object-cover rounded-xl hidden">
                     <button onclick="saveProperty()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl">حفظ العقار</button>
                     <button onclick="clearForm()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 rounded-xl">عقار جديد</button>
-                    <button onclick="deleteAll()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl">مسح كل العقارات والصور</button>
+                    <button onclick="deleteAll()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl">مسح كل العقارات</button>
                 </div>
             </div>
         </div>
@@ -82,17 +82,15 @@
 </div>
 </div>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
 <script>
-  const ADMIN_PASSWORD = "sara02"; // <-- كلمة السر هنا
+  const ADMIN_PASSWORD = "sara02";
 
-  // تشييك لو مسجل دخول قبل كده
-  if(sessionStorage.getItem('adminLoggedIn') === 'true'){
-    showDashboard();
-  }
+  if(sessionStorage.getItem('adminLoggedIn') === 'true'){ showDashboard(); }
 
   function checkPassword(){
     const pass = document.getElementById('passwordInput').value;
@@ -103,17 +101,14 @@
         document.getElementById('errorMsg').classList.remove('hidden');
     }
   }
-
   function showDashboard(){
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
-    initFirebase(); // شغل Firebase بعد الدخول
+    initFirebase();
   }
+  function logout(){ sessionStorage.removeItem('adminLoggedIn'); location.reload(); }
 
-  function logout(){
-    sessionStorage.removeItem('adminLoggedIn');
-    location.reload();
-  }
+  let db, storage;
 
   function initFirebase(){
     const firebaseConfig = {
@@ -125,8 +120,8 @@
       appId: "1:81990437380:web:22715c042d9d2b2d274351",
     };
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const storage = firebase.storage();
+    db = firebase.firestore();
+    storage = firebase.storage();
 
     document.getElementById('adminImage').onchange = e => {
       const file = e.target.files[0];
@@ -136,33 +131,53 @@
       }
     }
 
-    window.saveProperty = function() {
+    // دالة الحفظ المعدلة
+    window.saveProperty = async function() {
       const id = document.getElementById('editId').value;
+      const title = document.getElementById('adminTitle').value;
+      const location = document.getElementById('adminLocation').value;
+      const price = document.getElementById('adminPrice').value;
+      const desc = document.getElementById('adminDesc').value;
+      const file = document.getElementById('adminImage').files[0];
+
+      if(!title ||!location ||!price ||!desc) return alert("من فضلك املا كل الحقول الاساسية");
+
       const data = {
-          title: document.getElementById('adminTitle').value,
-          location: document.getElementById('adminLocation').value,
-          regionKey: document.getElementById('adminLocation').value.split(' - ')[0],
-          price: parseFloat(document.getElementById('adminPrice').value),
-          desc: document.getElementById('adminDesc').value,
+          title: title,
+          location: location,
+          regionKey: location.split(' - ')[0].trim(),
+          price: parseFloat(price),
+          desc: desc,
           tag: document.getElementById('adminTag').value,
           type: document.getElementById('adminType').value,
           area: document.getElementById('adminArea').value + ' م²',
-          beds: parseInt(document.getElementById('adminBeds').value) || null,
-          baths: parseInt(document.getElementById('adminBaths').value) || null,
+          beds: parseInt(document.getElementById('adminBeds').value) || 0,
+          baths: parseInt(document.getElementById('adminBaths').value) || 0,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
-      const file = document.getElementById('adminImage').files[0];
 
-      if(file){
-          const ref = storage.ref('properties/' + Date.now() + '_' + file.name);
-          ref.put(file).then(snap => snap.ref.getDownloadURL()).then(url => {
-              data.image = url;
-              if(id) db.collection("properties").doc(id).update(data); else db.collection("properties").add(data);
-              alert("تم الحفظ"); clearForm();
-          });
-      } else if(id) {
-          db.collection("properties").doc(id).update(data); alert("تم التعديل"); clearForm();
-      } else { alert("لازم ترفع صورة للعقار الجديد"); }
+      try {
+        if(file){
+            alert("جاري رفع الصورة...");
+            const ref = storage.ref('properties/' + Date.now() + '_' + file.name);
+            const snap = await ref.put(file);
+            data.image = await snap.ref.getDownloadURL();
+        }
+
+        if(id) {
+            await db.collection("properties").doc(id).update(data);
+            alert("تم التعديل بنجاح ✅");
+        } else {
+            if(!data.image) return alert("لازم ترفع صورة للعقار الجديد");
+            await db.collection("properties").add(data);
+            alert("تم حفظ العقار بنجاح ✅");
+        }
+        clearForm();
+
+      } catch (error) {
+        console.error("Error saving: ", error);
+        alert("حصل خطأ: " + error.message);
+      }
     }
 
     window.editProperty = function(id){
@@ -175,28 +190,32 @@
           document.getElementById('adminDesc').value = p.desc;
           document.getElementById('adminTag').value = p.tag;
           document.getElementById('adminType').value = p.type;
+          document.getElementById('adminArea').value = p.area.replace(' م²','');
+          document.getElementById('adminBeds').value = p.beds;
+          document.getElementById('adminBaths').value = p.baths;
           document.getElementById('previewImg').src = p.image;
           document.getElementById('previewImg').classList.remove('hidden');
       })
     }
 
-    window.deleteProperty = function(id, imageUrl){
+    window.deleteProperty = async function(id, imageUrl){
       if(!confirm("متأكد عايز تمسح العقار ده؟")) return;
-      db.collection("properties").doc(id).delete();
+      await db.collection("properties").doc(id).delete();
       if(imageUrl) storage.refFromURL(imageUrl).delete().catch(e=>{});
     }
 
-    window.deleteAll = function(){
-      if(!confirm("هتمسح كل العقارات والصور من Firebase. متأكد؟")) return;
-      db.collection("properties").get().then(snap=>{
-          snap.forEach(doc=>{ deleteProperty(doc.id, doc.data().image); })
-          alert("تم مسح الكل")
-      })
+    window.deleteAll = async function(){
+      if(!confirm("هتمسح كل العقارات والصور. متأكد؟")) return;
+      const snap = await db.collection("properties").get();
+      snap.forEach(doc=>{ deleteProperty(doc.id, doc.data().image); })
+      alert("تم مسح الكل")
     }
 
     window.clearForm = function(){
       document.getElementById('editId').value = '';
       document.querySelectorAll('#dashboard input, #dashboard textarea, #dashboard select').forEach(i=>i.value='');
+      document.getElementById('adminTag').value='للبيع';
+      document.getElementById('adminType').value='شقة';
       document.getElementById('previewImg').classList.add('hidden');
     }
 
@@ -222,10 +241,7 @@
     });
   }
 
-  // دخول بالانتر
-  document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') checkPassword();
-  })
+  document.getElementById('passwordInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') checkPassword(); })
 </script>
 </body>
 </html>
